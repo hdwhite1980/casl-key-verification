@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASL Key Verification System</title>
+  <script src="js/casl-bundle.js"></script>
+  <script src="js/casl-config.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #f5f5f5;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .app-container {
+      min-height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CASL Key Verification System</h1>
+      <p>A comprehensive guest verification system for short-term rentals</p>
+    </header>
+    
+    <div class="app-container">
+      <casl-app></casl-app>
+    </div>
+    
+    <footer>
+      <p>&copy; 2025 CASL Key Verification System. All rights reserved.</p>
+    </footer>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if configuration is loaded
+      if (!window.CASL_CONFIG) {
+        console.error('CASL configuration not loaded!');
+      }
+    });
+  </script>
+</body>
+</html>
