@@ -85,38 +85,44 @@
     // Configuration object
     window.CASL_CONFIG = {
       api: {
-        baseUrl: 'https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod'
+        baseUrl: 'https://tn25108ywk.execute-api.us-east-2.amazonaws.com/prod'
       },
       debug: true
     };
   </script>
   
-  <!-- Load your components with type="module" -->
+  <!-- Try to load the component directly -->
   <script type="module">
-    // Import and initialize main component
-    import('./CASLApp.js')
+    // First try CASLVerification.js
+    import('./CASLVerification.js')
       .then(module => {
         try {
-          // Check if CASLApp is properly exported
-          if (module.CASLApp) {
-            // Create and mount component if not already defined
-            if (!customElements.get('casl-app')) {
-              customElements.define('casl-app', module.CASLApp);
-            }
-            
-            // Create app element
-            const app = document.createElement('casl-app');
-            
-            // Replace loading with app
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('app').appendChild(app);
-            
-            console.log('CASL Key Verification System loaded successfully');
-          } else {
-            throw new Error('CASLApp component not found in module');
+          if (!customElements.get('casl-verification')) {
+            customElements.define('casl-verification', module.CASLVerification);
           }
+          
+          const verification = document.createElement('casl-verification');
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('app').appendChild(verification);
+          
+          console.log('CASL Key Verification System loaded successfully');
         } catch (error) {
-          handleError(error);
+          // If first module fails, try a fallback
+          import('./src/components/CASLVerification.js')
+            .then(fallbackModule => {
+              if (!customElements.get('casl-verification')) {
+                customElements.define('casl-verification', fallbackModule.CASLVerification);
+              }
+              
+              const verification = document.createElement('casl-verification');
+              document.getElementById('loading').style.display = 'none';
+              document.getElementById('app').appendChild(verification);
+              
+              console.log('CASL Key Verification System loaded using fallback path');
+            })
+            .catch(fallbackError => {
+              handleError(new Error(`Failed to load using both paths: ${error.message}, ${fallbackError.message}`));
+            });
         }
       })
       .catch(error => {
