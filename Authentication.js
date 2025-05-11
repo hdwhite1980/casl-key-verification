@@ -1,8 +1,8 @@
 // src/components/Authentication.js
-import { getStyles } from './common/Styles.js';
-import { apiSecurity } from '../services/apiSecurity.js';
-import { userService } from '../services/userService.js';
-import { i18nService, t } from '../services/i18n.js';
+import { getStyles } from './Styles.js';
+import { apiSecurity } from './apiSecurity.js';
+import { userService } from './userService.js';
+import { i18nService, t } from './i18n.js';
 
 /**
  * Authentication component for CASL Key Verification
