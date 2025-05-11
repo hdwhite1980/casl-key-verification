@@ -12,8 +12,21 @@
       }
     };
   </script>
+  <!-- Core CASL files -->
   <script src="js/casl-bundle.js"></script>
   <script src="js/casl-config.js"></script>
+  
+  <!-- Missing JS modules -->
+  <script src="js/Styles.js"></script>
+  <script src="js/Alerts.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/backgroundCheck.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/phoneVerification.js"></script>
+  <script src="js/governmentIdVerification.js"></script>
+  <script src="js/socialVerification.js"></script>
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,6 +85,14 @@
       // Check if configuration is loaded
       if (!window.CASL_CONFIG) {
         console.error('CASL configuration not loaded!');
+      }
+      
+      // Initialize application modules
+      try {
+        console.log('Initializing CASL verification system...');
+        // Any additional initialization code can go here
+      } catch (error) {
+        console.error('Error initializing CASL system:', error);
       }
     });
   </script>
