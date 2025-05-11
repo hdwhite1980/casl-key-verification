@@ -1,5 +1,5 @@
 // src/components/FormSteps/Agreement.js
-import { renderTooltip } from '../common/Alerts.js';
+import { renderTooltip } from './Alerts.js';
 
 /**
  * Renders the Agreement form step
