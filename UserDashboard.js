@@ -1,8 +1,8 @@
 // src/components/UserDashboard.js
-import { getStyles } from './common/Styles.js';
-import { userService } from '../services/userService.js';
-import { i18nService, t } from '../services/i18n.js';
-import { API_BASE_URL } from '../utils/constants.js';
+import { getStyles } from './Styles.js';
+import { userService } from './userService.js';
+import { i18nService, t } from './i18n.js';
+import { API_BASE_URL } from './constants.js';
 
 /**
  * User Dashboard component for CASL Key Verification
