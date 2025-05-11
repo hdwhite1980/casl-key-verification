@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASL Key Verification System</title>
+  <script>
+    // Simple process polyfill for browser environment
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+  </script>
   <script src="js/casl-bundle.js"></script>
   <script src="js/casl-config.js"></script>
   <style>
