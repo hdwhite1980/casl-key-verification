@@ -1,4 +1,4 @@
-// src/utils/ConfigManager.js
+  // src/utils/ConfigManager.js
 
 /**
  * Configuration manager to handle environment variables
@@ -43,8 +43,8 @@ class ConfigManager {
    * Initialize configuration
    */
   init() {
-    // Load configuration from environment variables
-    this.loadFromEnv();
+    // Load configuration from global config object
+    this.loadFromGlobalConfig();
     
     // Load configuration from meta tags
     this.loadFromMetaTags();
@@ -60,24 +60,42 @@ class ConfigManager {
   }
   
   /**
-   * Load configuration from environment variables
+   * Load configuration from global config object
+   * Replaces the original loadFromEnv method
    */
-  loadFromEnv() {
-    // For browser environment, we can't directly access process.env
-    // This is more relevant for bundled environments with webpack/etc.
+  loadFromGlobalConfig() {
     try {
-      // Check if process.env is available (e.g., when using webpack)
-      if (typeof process !== 'undefined' && process.env) {
-        Object.keys(process.env).forEach(key => {
-          if (key.startsWith('CASL_')) {
-            const configKey = key.replace('CASL_', '');
-            this.config[configKey] = process.env[key];
-          }
+      // Check if global CASL_CONFIG is available
+      if (typeof window !== 'undefined' && window.CASL_CONFIG) {
+        // Get config from window.CASL_CONFIG
+        const config = this.flattenConfig(window.CASL_CONFIG);
+        
+        // Add to this.config
+        Object.keys(config).forEach(key => {
+          this.config[key] = config[key];
         });
       }
     } catch (error) {
-      console.warn('Could not load config from environment variables:', error);
+      console.warn('Could not load config from global config object:', error);
     }
+  }
+  
+  /**
+   * Helper to flatten nested configuration objects
+   * @param {Object} obj - Object to flatten
+   * @param {string} prefix - Key prefix
+   * @returns {Object} Flattened object
+   */
+  flattenConfig(obj, prefix = '') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const pre = prefix.length ? `${prefix}_` : '';
+      if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+        Object.assign(acc, this.flattenConfig(obj[key], `${pre}${key}`));
+      } else {
+        acc[`${pre}${key}`.toUpperCase()] = obj[key];
+      }
+      return acc;
+    }, {});
   }
   
   /**
@@ -213,6 +231,10 @@ class ConfigManager {
    * @returns {string} API base URL
    */
   getApiBaseUrl() {
+    // First try to get from global config if available
+    if (typeof window !== 'undefined' && window.CASL_CONFIG && window.CASL_CONFIG.api && window.CASL_CONFIG.api.baseUrl) {
+      return window.CASL_CONFIG.api.baseUrl;
+    }
     return this.get('API_BASE_URL');
   }
   
