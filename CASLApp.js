@@ -1,8 +1,8 @@
 // src/components/CASLApp.js
-import { getStyles } from './common/Styles.js';
-import { i18nService, t } from '../services/i18n.js';
-import { userService } from '../services/userService.js';
-import { paymentService } from '../services/paymentService.js';
+import { getStyles } from './Styles.js';
+import { i18nService, t } from './i18n.js';
+import { userService } from './userService.js';
+import { paymentService } from './paymentService.js';
 
 /**
  * Main CASL App component that manages authentication, dashboard, and verification
