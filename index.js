@@ -1,9 +1,9 @@
 // src/index.js
-import { CASLVerification } from './components/CASLVerification.js';
-import { Authentication } from './components/Authentication.js';
-import { UserDashboard } from './components/UserDashboard.js';
-import { CASLApp } from './components/CASLApp.js';
-import { accessibilityHelper } from './utils/AccessibilityHelper.js';
+import { CASLVerification } from './CASLVerification.js';
+import { Authentication } from './Authentication.js';
+import { UserDashboard } from './UserDashboard.js';
+import { CASLApp } from './CASLApp.js';
+import { accessibilityHelper } from './AccessibilityHelper.js';
 
 // Initialize accessibility features
 document.addEventListener('DOMContentLoaded', () => {
