@@ -2,13 +2,13 @@ window.CASL_CONFIG = {
   api: {
     baseUrl: "https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod",
     endpoints: {
-      userCheck: "/api/user-check",
-      verify: "/api/verify",
-      history: "/api/verification-history",
-      packages: "/api/packages",
-      login: "/api/login",
-      register: "/api/register",
-      status: "/api/status"
+      userCheck: "/user-check",
+      verify: "/verify",
+      history: "/verification-history",
+      packages: "/packages",
+      login: "/login",
+      register: "/register",
+      status: "/status"
     }
   },
   auth: {
