@@ -1,5 +1,5 @@
 // src/services/paymentService.js
-import { API_BASE_URL } from '../utils/constants.js';
+import { API_BASE_URL } from './constants.js';
 import { userService } from './userService.js';
 
 /**
