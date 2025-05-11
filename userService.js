@@ -1,6 +1,6 @@
 // src/services/userService.js
 import { apiSecurity } from './apiSecurity.js';
-import { API_BASE_URL } from '../utils/constants.js';
+import { API_BASE_URL } from './constants.js';
 
 /**
  * User service for managing authentication with Cognito
