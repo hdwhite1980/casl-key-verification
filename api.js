@@ -1,9 +1,9 @@
 // src/services/api.js
-import { configManager } from '../utils/ConfigManager.js';
-import { generateCASLKeyId } from '../utils/idGenerator.js';
+import { configManager } from './ConfigManager.js';
+import { generateCASLKeyId } from './idGenerator.js';
 import { apiSecurity } from './apiSecurity.js';
-import { errorHandler } from '../utils/ErrorHandler.js';
-import { stateManager } from '../utils/StateManager.js';
+import { errorHandler } from './ErrorHandler.js';
+import { stateManager } from './StateManager.js';
 
 /**
  * API service for CASL Verification with enhanced security and error handling
