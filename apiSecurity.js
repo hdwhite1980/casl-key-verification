@@ -1,7 +1,7 @@
 // src/services/apiSecurity.js
-import { configManager } from '../utils/ConfigManager.js';
-import { cookieUtility } from '../utils/CookieUtility.js';
-import { errorHandler } from '../utils/ErrorHandler.js';
+import { configManager } from './ConfigManager.js';
+import { cookieUtility } from './CookieUtility.js';
+import { errorHandler } from './ErrorHandler.js';
 
 /**
  * API security service for CASL Verification
