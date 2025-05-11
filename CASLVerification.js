@@ -1,12 +1,12 @@
 	// src/components/CASLVerification.js
-import { getStyles } from './common/Styles.js';
-import { renderProgressSteps } from './common/ProgressSteps.js';
-import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './common/Alerts.js';
-import { renderNavigationButtons } from './common/NavigationButtons.js';
-import { renderUserIdentification } from './FormSteps/UserIdentification.js';
-import { renderBookingInfo } from './FormSteps/BookingInfo.js';
-import { renderStayIntent } from './FormSteps/StayIntent.js';
-import { renderAgreement } from './FormSteps/Agreement.js';
+import { getStyles } from './Styles.js';
+import { renderProgressSteps } from './ProgressSteps.js';
+import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './Alerts.js';
+import { renderNavigationButtons } from './NavigationButtons.js';
+import { renderUserIdentification } from './UserIdentification.js';
+import { renderBookingInfo } from './BookingInfo.js';
+import { renderStayIntent } from './StayIntent.js';
+import { renderAgreement } from './Agreement.js';
 import { renderResults } from './ResultsView.js';
 
 import { 
@@ -17,28 +17,28 @@ import {
   isStepValid
 } from '../utils/validation.js';
 
-import { stateManager } from '../utils/StateManager.js';
-import { eventManager } from '../utils/EventManager.js';
-import { errorHandler } from '../utils/ErrorHandler.js';
-import { configManager } from '../utils/ConfigManager.js';
-import { accessibilityHelper } from '../utils/AccessibilityHelper.js';
-import { formHelper } from '../utils/FormHelper.js';
-import { accessibilityMessages } from '../utils/accessibilityMessages.js';
+import { stateManager } from './StateManager.js';
+import { eventManager } from './EventManager.js';
+import { errorHandler } from './ErrorHandler.js';
+import { configManager } from './ConfigManager.js';
+import { accessibilityHelper } from './AccessibilityHelper.js';
+import { formHelper } from './FormHelper.js';
+import { accessibilityMessages } from './accessibilityMessages.js';
 
-import { apiService } from '../services/api.js';
-import { apiSecurity } from '../services/apiSecurity.js';
-import { i18nService, t } from '../services/i18n.js';
-import { governmentIdVerification } from '../services/governmentIdVerification.js';
-import { phoneVerification } from '../services/phoneVerification.js';
-import { socialVerification } from '../services/socialVerification.js';
-import { backgroundCheckService } from '../services/backgroundCheck.js';
+import { apiService } from './api.js';
+import { apiSecurity } from './apiSecurity.js';
+import { i18nService, t } from './i18n.js';
+import { governmentIdVerification } from './governmentIdVerification.js';
+import { phoneVerification } from './phoneVerification.js';
+import { socialVerification } from './socialVerification.js';
+import { backgroundCheckService } from './backgroundCheck.js';
 
 import {
   calculateScore,
   getTrustLevel,
   getResultMessage,
   generateHostSummary
-} from '../services/scoreCalculator.js';
+} from './scoreCalculator.js';
 
 import {
   renderVerificationMethodSelector,
@@ -46,7 +46,7 @@ import {
   getVerificationBonus
 } from './VerificationMethods.js';
 
-import { VERIFICATION_STATUSES, FORM_STEPS } from '../utils/constants.js';
+import { VERIFICATION_STATUSES, FORM_STEPS } from './constants.js';
 
 /**
  * Performance monitoring utility
