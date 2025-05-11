@@ -1,5 +1,5 @@
 // src/services/scoreCalculator.js
-import { TRUST_LEVELS, TRUST_LEVEL_DISPLAY } from '../utils/constants.js';
+import { TRUST_LEVELS, TRUST_LEVEL_DISPLAY } from './constants.js';
 
 /**
  * Calculate a trust score based on the user's form data and verification info
