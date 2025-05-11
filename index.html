@@ -4,152 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASL Key Verification System</title>
+  <script>
+    // Simple process polyfill for browser environment
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+  </script>
+  <script src="js/casl-bundle.js"></script>
+  <script src="js/casl-config.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 20px;
       line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-      color: #333;
     }
-    
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
     }
-    
-    h1 {
-      color: #2c3e50;
-    }
-    
-    #app {
-      min-height: 500px;
-      border: 1px solid #eee;
-      border-radius: 8px;
+    header {
+      background-color: #f5f5f5;
       padding: 20px;
-      margin-top: 20px;
-    }
-    
-    #loading {
-      text-align: center;
-      padding: 40px;
-    }
-    
-    #error {
-      display: none;
-      color: #c62828;
-      border: 1px solid #c62828;
-      background-color: #ffebee;
-      padding: 20px;
+      margin-bottom: 20px;
       border-radius: 5px;
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .app-container {
+      min-height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
       margin-bottom: 20px;
     }
-    
     footer {
-      text-align: center;
-      margin-top: 40px;
-      padding-top: 20px;
+      margin-top: 20px;
+      padding-top: 10px;
       border-top: 1px solid #eee;
-      color: #7f8c8d;
+      color: #777;
       font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>CASL Key Verification System</h1>
-    <p>A comprehensive guest verification system for short-term rentals</p>
+    <header>
+      <h1>CASL Key Verification System</h1>
+      <p>A comprehensive guest verification system for short-term rentals</p>
+    </header>
     
-    <div id="error"></div>
-    
-    <div id="app">
-      <div id="loading">
-        <p>Loading verification system...</p>
-      </div>
+    <div class="app-container">
+      <casl-app></casl-app>
     </div>
     
     <footer>
-      &copy; 2025 CASL Key Verification System. All rights reserved.
+      <p>&copy; 2025 CASL Key Verification System. All rights reserved.</p>
     </footer>
   </div>
-
-  <script>
-    // Polyfill for process.env
-    window.process = {
-      env: {
-        NODE_ENV: 'production'
-      }
-    };
-    
-    // Configuration object
-    window.CASL_CONFIG = {
-      api: {
-        baseUrl: 'https://tn25108ywk.execute-api.us-east-2.amazonaws.com/prod'
-      },
-      debug: true
-    };
-  </script>
   
-  <!-- Try to load the component directly -->
-  <script type="module">
-    // First try CASLVerification.js
-    import('./CASLVerification.js')
-      .then(module => {
-        try {
-          if (!customElements.get('casl-verification')) {
-            customElements.define('casl-verification', module.CASLVerification);
-          }
-          
-          const verification = document.createElement('casl-verification');
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('app').appendChild(verification);
-          
-          console.log('CASL Key Verification System loaded successfully');
-        } catch (error) {
-          // If first module fails, try a fallback
-          import('./src/components/CASLVerification.js')
-            .then(fallbackModule => {
-              if (!customElements.get('casl-verification')) {
-                customElements.define('casl-verification', fallbackModule.CASLVerification);
-              }
-              
-              const verification = document.createElement('casl-verification');
-              document.getElementById('loading').style.display = 'none';
-              document.getElementById('app').appendChild(verification);
-              
-              console.log('CASL Key Verification System loaded using fallback path');
-            })
-            .catch(fallbackError => {
-              handleError(new Error(`Failed to load using both paths: ${error.message}, ${fallbackError.message}`));
-            });
-        }
-      })
-      .catch(error => {
-        handleError(error);
-      });
-    
-    // Error handler function
-    function handleError(error) {
-      console.error('Failed to load CASL Key Verification System:', error);
-      
-      document.getElementById('loading').style.display = 'none';
-      
-      // Show error message
-      const errorEl = document.getElementById('error');
-      errorEl.style.display = 'block';
-      errorEl.innerHTML = `
-        <h3>Error Loading Verification System</h3>
-        <p>The application could not be loaded. This might be due to:</p>
-        <ul>
-          <li>Network connectivity issues</li>
-          <li>JavaScript module loading problems</li>
-          <li>Missing component files</li>
-        </ul>
-        <p>Technical details: ${error.message}</p>
-        <p>Please try refreshing the page or check the browser console for more information.</p>
-      `;
-    }
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if configuration is loaded
+      if (!window.CASL_CONFIG) {
+        console.error('CASL configuration not loaded!');
+      }
+    });
   </script>
 </body>
 </html>
