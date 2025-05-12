@@ -4,29 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASL Key Verification System</title>
-  <script>
-    // Simple process polyfill for browser environment
-    window.process = {
-      env: {
-        NODE_ENV: 'production'
-      }
-    };
-  </script>
-  <!-- Core CASL files -->
-  <script src="js/casl-bundle.js"></script>
-  <script src="js/casl-config.js"></script>
-  
-  <!-- Missing JS modules -->
-  <script src="js/Styles.js"></script>
-  <script src="js/Alerts.js"></script>
-  <script src="js/validation.js"></script>
-  <script src="js/backgroundCheck.js"></script>
-  <script src="js/constants.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/phoneVerification.js"></script>
-  <script src="js/governmentIdVerification.js"></script>
-  <script src="js/socialVerification.js"></script>
-  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -62,6 +39,20 @@
       color: #777;
       font-size: 14px;
     }
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 18px;
+      color: #666;
+    }
+    .error {
+      color: #d9534f;
+      background-color: #f9f2f2;
+      border: 1px solid #ebccd1;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -72,7 +63,9 @@
     </header>
     
     <div class="app-container">
-      <casl-app></casl-app>
+      <div id="loading-message" class="loading">Loading CASL Key Verification System...</div>
+      <div id="error-message" class="error" style="display: none;"></div>
+      <casl-app style="display: none;"></casl-app>
     </div>
     
     <footer>
@@ -80,19 +73,78 @@
     </footer>
   </div>
   
+  <!-- Simple process polyfill for browser environment -->
+  <script>
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+  </script>
+
+  <!-- Configuration must be loaded first -->
+  <script src="casl-config.js"></script>
+  
+  <!-- Core bundle comes next -->
+  <script src="casl-bundle.js"></script>
+  
+  <!-- Support modules -->
+  <script src="constants.js"></script>
+  <script src="i18n.js"></script>
+  <script src="validation.js"></script>
+  
+  <!-- UI components -->
+  <script src="Styles.js"></script>
+  <script src="Alerts.js"></script>
+  
+  <!-- Verification modules -->
+  <script src="phoneVerification.js"></script>
+  <script src="governmentIdVerification.js"></script>
+  <script src="socialVerification.js"></script>
+  <script src="backgroundCheck.js"></script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const appElement = document.querySelector('casl-app');
+      const loadingElement = document.getElementById('loading-message');
+      const errorElement = document.getElementById('error-message');
+      
       // Check if configuration is loaded
       if (!window.CASL_CONFIG) {
-        console.error('CASL configuration not loaded!');
+        errorElement.textContent = 'Configuration not loaded. Please check that casl-config.js is accessible.';
+        errorElement.style.display = 'block';
+        loadingElement.style.display = 'none';
+        return;
       }
       
-      // Initialize application modules
       try {
         console.log('Initializing CASL verification system...');
-        // Any additional initialization code can go here
+        
+        // Verify API accessibility
+        fetch(window.CASL_CONFIG.api.baseUrl + window.CASL_CONFIG.api.endpoints.status)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`API status check failed: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('API connection successful', data);
+            // Show the app and hide loading message
+            appElement.style.display = 'block';
+            loadingElement.style.display = 'none';
+          })
+          .catch(error => {
+            console.error('API connection failed:', error);
+            errorElement.textContent = `Unable to connect to verification system API. ${error.message}`;
+            errorElement.style.display = 'block';
+            loadingElement.style.display = 'none';
+          });
       } catch (error) {
         console.error('Error initializing CASL system:', error);
+        errorElement.textContent = `Error initializing verification system: ${error.message}`;
+        errorElement.style.display = 'block';
+        loadingElement.style.display = 'none';
       }
     });
   </script>
