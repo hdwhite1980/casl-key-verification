@@ -4,29 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASL Key Verification System</title>
-  <script>
-    // Simple process polyfill for browser environment
-    window.process = {
-      env: {
-        NODE_ENV: 'production'
-      }
-    };
-  </script>
-  <!-- Core CASL files -->
-  <script src="/casl-bundle.js"></script>
-  <script src="/casl-config.js"></script>
-  
-  <!-- Missing JS modules -->
-  <script src="/Styles.js"></script>
-  <script src="/Alerts.js"></script>
-  <script src="/validation.js"></script>
-  <script src="/backgroundCheck.js"></script>
-  <script src="/constants.js"></script>
-  <script src="/i18n.js"></script>
-  <script src="/phoneVerification.js"></script>
-  <script src="/governmentIdVerification.js"></script>
-  <script src="/socialVerification.js"></script>
-  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -62,6 +39,19 @@
       color: #777;
       font-size: 14px;
     }
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+    .error {
+      color: #d9534f;
+      background-color: #f9f2f2;
+      border: 1px solid #ebccd1;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +62,8 @@
     </header>
     
     <div class="app-container">
+      <div id="loading" class="loading">Loading CASL Key Verification System...</div>
+      <div id="error" class="error"></div>
       <casl-app></casl-app>
     </div>
     
@@ -80,19 +72,45 @@
     </footer>
   </div>
   
+  <!-- Global configuration and polyfills -->
   <script>
+    // Simple process polyfill for browser environment
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+    
+    // Global error handler
+    window.handleCASLError = function(error) {
+      console.error('CASL Error:', error);
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = error.message || 'An error occurred loading the verification system';
+      errorEl.style.display = 'block';
+      document.getElementById('loading').style.display = 'none';
+    };
+  </script>
+  
+  <!-- Configuration loaded as regular script -->
+  <script src="casl-config.js"></script>
+  
+  <!-- The main entry point as ES6 module -->
+  <script type="module">
+    // Import your modules
+    import { initializeApp } from './app.js';
+    
     document.addEventListener('DOMContentLoaded', () => {
       // Check if configuration is loaded
       if (!window.CASL_CONFIG) {
-        console.error('CASL configuration not loaded!');
+        window.handleCASLError(new Error('CASL configuration not loaded!'));
+        return;
       }
       
-      // Initialize application modules
       try {
         console.log('Initializing CASL verification system...');
-        // Any additional initialization code can go here
+        initializeApp();
       } catch (error) {
-        console.error('Error initializing CASL system:', error);
+        window.handleCASLError(error);
       }
     });
   </script>
