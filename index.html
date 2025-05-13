@@ -73,80 +73,67 @@
     </footer>
   </div>
   
-  <!-- Simple process polyfill for browser environment -->
+  <!-- Global configuration and polyfills (these must be regular scripts, not modules) -->
   <script>
+    // Process polyfill for browser environment
     window.process = {
       env: {
         NODE_ENV: 'production'
       }
     };
-  </script>
-
-  <!-- Configuration must be loaded first -->
-  <script src="casl-config.js"></script>
-  
-  <!-- Core bundle comes next -->
-  <script src="casl-bundle.js"></script>
-  
-  <!-- Support modules -->
-  <script src="constants.js"></script>
-  <script src="i18n.js"></script>
-  <script src="validation.js"></script>
-  
-  <!-- UI components -->
-  <script src="Styles.js"></script>
-  <script src="Alerts.js"></script>
-  
-  <!-- Verification modules -->
-  <script src="phoneVerification.js"></script>
-  <script src="governmentIdVerification.js"></script>
-  <script src="socialVerification.js"></script>
-  <script src="backgroundCheck.js"></script>
-  
-  <script>
+    
+    // Global configuration
+    window.CASL_CONFIG = {
+      api: {
+        baseUrl: "https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod",
+        endpoints: {
+          userCheck: "/user-check",
+          verify: "/verify",
+          history: "/verification-history",
+          packages: "/packages",
+          login: "/login",
+          register: "/register",
+          status: "/status"
+        }
+      },
+      auth: {
+        region: "us-east-2",
+        userPoolId: "us-east-2_wxVzxzC7V",
+        userPoolWebClientId: "6eihn0891v31dsovg33g2e1h90"
+      },
+      storage: {
+        cdnBaseUrl: "https://d3hf6lqvkzgyx8.cloudfront.net"
+      },
+      app: {
+        name: "CASL Key Verification System",
+        version: "1.0.0",
+        environment: "production"
+      }
+    };
+    
+    // Add DOM elements to window so modules can access them
+    window.CASL_ELEMENTS = {
+      appElement: null,
+      loadingElement: null,
+      errorElement: null
+    };
+    
     document.addEventListener('DOMContentLoaded', () => {
-      const appElement = document.querySelector('casl-app');
-      const loadingElement = document.getElementById('loading-message');
-      const errorElement = document.getElementById('error-message');
+      window.CASL_ELEMENTS.appElement = document.querySelector('casl-app');
+      window.CASL_ELEMENTS.loadingElement = document.getElementById('loading-message');
+      window.CASL_ELEMENTS.errorElement = document.getElementById('error-message');
       
       // Check if configuration is loaded
       if (!window.CASL_CONFIG) {
-        errorElement.textContent = 'Configuration not loaded. Please check that casl-config.js is accessible.';
-        errorElement.style.display = 'block';
-        loadingElement.style.display = 'none';
+        window.CASL_ELEMENTS.errorElement.textContent = 'Configuration not loaded. Please check that casl-config.js is accessible.';
+        window.CASL_ELEMENTS.errorElement.style.display = 'block';
+        window.CASL_ELEMENTS.loadingElement.style.display = 'none';
         return;
-      }
-      
-      try {
-        console.log('Initializing CASL verification system...');
-        
-        // Verify API accessibility
-        fetch(window.CASL_CONFIG.api.baseUrl + window.CASL_CONFIG.api.endpoints.status)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`API status check failed: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('API connection successful', data);
-            // Show the app and hide loading message
-            appElement.style.display = 'block';
-            loadingElement.style.display = 'none';
-          })
-          .catch(error => {
-            console.error('API connection failed:', error);
-            errorElement.textContent = `Unable to connect to verification system API. ${error.message}`;
-            errorElement.style.display = 'block';
-            loadingElement.style.display = 'none';
-          });
-      } catch (error) {
-        console.error('Error initializing CASL system:', error);
-        errorElement.textContent = `Error initializing verification system: ${error.message}`;
-        errorElement.style.display = 'block';
-        loadingElement.style.display = 'none';
       }
     });
   </script>
+  
+  <!-- Main application entry point - MUST be type="module" -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
