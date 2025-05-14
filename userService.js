@@ -45,7 +45,7 @@ class UserService {
    */
   async fetchConfiguration() {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth-config`, {
+      const response = await fetch(`${API_BASE_URL}/casl-config`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
