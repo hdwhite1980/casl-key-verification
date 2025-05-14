@@ -1,5 +1,5 @@
 // src/utils/constants.js
-export const API_BASE_URL = 'https://tn25108ywk.execute-api.us-east-2.amazonaws.com/prod';
+export const API_BASE_URL = 'https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod';
 
 export const VERIFICATION_STATUSES = {
   NOT_SUBMITTED: 'NOT_SUBMITTED',
