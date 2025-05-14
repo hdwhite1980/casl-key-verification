@@ -62,8 +62,8 @@ class UserService {
       
       // Return default configuration in case of error
       return {
-        userPoolId: 'us-east-2_xyzABCDEF',  // Replace with your actual User Pool ID
-        clientId: 'abcdefghijklmnopqrstuv'  // Replace with your actual Client ID
+        userPoolId: 'CASLKeyAppClient',  // Replace with your actual User Pool ID
+        clientId: '6eihn0891v31dsovg33g2e1h90'  // Replace with your actual Client ID
       };
     }
   }
