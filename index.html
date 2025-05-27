@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASL Key Verification System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #f5f5f5;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .app-container {
+      min-height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      color: #777;
+      font-size: 14px;
+    }
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 18px;
+      color: #666;
+    }
+    .error {
+      color: #d9534f;
+      background-color: #f9f2f2;
+      border: 1px solid #ebccd1;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CASL Key Verification System</h1>
+      <p>A comprehensive guest verification system for short-term rentals</p>
+    </header>
+
+    <div class="app-container">
+      <div id="loading-message" class="loading">Loading CASL Key Verification System...</div>
+      <div id="error-message" class="error" style="display: none;"></div>
+      <casl-app style="display: none;"></casl-app>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 CASL Key Verification System. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Global configuration and polyfills -->
+  <script>
+    // Simulate process.env for compatibility
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+
+    // Global configuration
+    window.CASL_CONFIG = {
+      api: {
+        baseUrl: "https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod",
+        endpoints: {
+          userCheck: "/user-check",
+          verify: "/verify",
+          history: "/verification-history",
+          packages: "/packages",
+          login: "/login",
+          register: "/register",
+          status: "/status"
+        }
+      },
+      auth: {
+        region: "us-east-2",
+        userPoolId: "us-east-2_wxVzxzC7V",
+        userPoolWebClientId: "6eihn0891v31dsovg33g2e1h90"
+      },
+      storage: {
+        cdnBaseUrl: "https://d3hf6lqvkzgyx8.cloudfront.net"
+      },
+      app: {
+        name: "CASL Key Verification System",
+        version: "1.0.0",
+        environment: "production"
+      }
+    };
+
+    // DOM elements for reference
+    window.CASL_ELEMENTS = {
+      appElement: null,
+      loadingElement: null,
+      errorElement: null
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.CASL_ELEMENTS.appElement = document.querySelector('casl-app');
+      window.CASL_ELEMENTS.loadingElement = document.getElementById('loading-message');
+      window.CASL_ELEMENTS.errorElement = document.getElementById('error-message');
+
+      if (!window.CASL_CONFIG) {
+        window.CASL_ELEMENTS.errorElement.textContent = 'Configuration not loaded. Please check that casl-config.js is accessible.';
+        window.CASL_ELEMENTS.errorElement.style.display = 'block';
+        window.CASL_ELEMENTS.loadingElement.style.display = 'none';
+        return;
+      }
+
+      // ✅ Show the app and hide the loading message
+      window.CASL_ELEMENTS.loadingElement.style.display = 'none';
+      window.CASL_ELEMENTS.appElement.style.display = 'block';
+    });
+  </script>
+
+  <!-- Main application entry point -->
+  <script type="module" src="CASLApp.js"></script>
+</body>
+</html>
