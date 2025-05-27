@@ -680,6 +680,18 @@ export class CASLApp extends HTMLElement {
       this.render();
     });
   }
+    /**
+   * Handle language change from selector
+   */
+  handleLanguageChange(event) {
+    const selectedLang = event.target.value;
+    if (!selectedLang) return;
+
+    i18nService.changeLanguage(selectedLang).then(() => {
+      this.render();
+    });
+  }
+
 }
 
 // Register the custom element
