@@ -2,13 +2,13 @@ window.CASL_CONFIG = {
   api: {
     baseUrl: "https://2mez9qoyt6.execute-api.us-east-2.amazonaws.com/prod",
     endpoints: {
-      userCheck: "/user-check",
-      verify: "/verify",
-      history: "/verification-history",
-      packages: "/packages",
-      login: "/login",
-      register: "/register",
-      status: "/status"
+      userCheck: "/api/user-check",
+      verify: "/api/verify",
+      history: "/api/verification-history", 
+      packages: "/api/packages",
+      login: "/api/login",
+      register: "/api/register",
+      status: "/api/status"
     }
   },
   auth: {
@@ -22,6 +22,16 @@ window.CASL_CONFIG = {
   app: {
     name: "CASL Key Verification System",
     version: "1.0.0",
-    environment: "production"
+    environment: "production",
+    debug: true
   }
 };
+
+// Debug logging
+console.log('CASL Config loaded:', window.CASL_CONFIG);
+
+// Test API connectivity on load
+fetch(window.CASL_CONFIG.api.baseUrl + '/api/status')
+  .then(response => response.json())
+  .then(data => console.log('API Status:', data))
+  .catch(error => console.error('API Error:', error));

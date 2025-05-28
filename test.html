@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CASL Key Test Page</title>
+    <script src="js/casl-config.js"></script>
+</head>
+<body>
+    <h1>CASL Key API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const resultsDiv = document.getElementById('results');
+            
+            // Test 1: Check config loaded
+            if (window.CASL_CONFIG) {
+                resultsDiv.innerHTML += '<p>✅ Config loaded</p>';
+                resultsDiv.innerHTML += '<p>API URL: ' + window.CASL_CONFIG.api.baseUrl + '</p>';
+            } else {
+                resultsDiv.innerHTML += '<p>❌ Config not loaded</p>';
+                return;
+            }
+            
+            // Test 2: Test API status
+            try {
+                const response = await fetch(window.CASL_CONFIG.api.baseUrl + '/api/status');
+                const data = await response.json();
+                resultsDiv.innerHTML += '<p>✅ API Status: ' + JSON.stringify(data) + '</p>';
+            } catch (error) {
+                resultsDiv.innerHTML += '<p>❌ API Error: ' + error.message + '</p>';
+            }
+            
+            // Test 3: Test packages endpoint
+            try {
+                const response = await fetch(window.CASL_CONFIG.api.baseUrl + '/api/packages');
+                const data = await response.json();
+                resultsDiv.innerHTML += '<p>✅ Packages loaded: ' + data.packages.length + ' packages</p>';
+            } catch (error) {
+                resultsDiv.innerHTML += '<p>❌ Packages Error: ' + error.message + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>
