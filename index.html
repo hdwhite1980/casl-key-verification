@@ -5,22 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CASL Key Verification System</title>
     
-    <!-- Load configuration first -->
+    <!-- Load configuration first (regular script) -->
     <script src="casl-config.js"></script>
-    
-    <!-- Load all supporting JS files in order -->
-    <script src="constants.js"></script>
-    <script src="storage.js"></script>
-    <script src="validation.js"></script>
-    <script src="api.js"></script>
-    <script src="userService.js"></script>
-    <script src="paymentService.js"></script>
-    <script src="i18n.js"></script>
-    <script src="styles.js"></script>
-    <script src="ConfigManager.js"></script>
-    <script src="ErrorHandler.js"></script>
-    <script src="StateManager.js"></script>
-    <script src="EventManager.js"></script>
     
     <style>
         body { 
@@ -103,6 +89,8 @@
             color: #495057;
             text-align: left;
             border-left: 4px solid #dc3545;
+            max-height: 200px;
+            overflow-y: auto;
         }
         
         .retry-button {
@@ -138,24 +126,6 @@
             max-width: 300px;
             z-index: 1000;
         }
-        
-        @media (max-width: 768px) {
-            .loading-screen {
-                padding: 2rem;
-            }
-            
-            .error-screen {
-                margin: 1rem;
-                padding: 2rem 1rem;
-            }
-            
-            .debug-info {
-                position: relative;
-                bottom: auto;
-                right: auto;
-                margin: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -163,7 +133,7 @@
     <div id="loading-screen" class="loading-screen">
         <div class="loading-spinner"></div>
         <div class="loading-text">CASL Key Verification</div>
-        <div class="loading-subtext">Initializing secure verification system...</div>
+        <div class="loading-subtext">Loading ES6 modules...</div>
     </div>
     
     <!-- Main App Container -->
@@ -174,9 +144,9 @@
     <!-- Error Screen -->
     <div id="error-screen" class="error-screen" style="display: none;">
         <div class="error-icon">⚠️</div>
-        <div class="error-title">Application Failed to Load</div>
+        <div class="error-title">Module Loading Failed</div>
         <div class="error-message" id="error-message">
-            We're having trouble starting the application. Please try refreshing the page.
+            Failed to load ES6 modules. Please check the browser console for details.
         </div>
         <div class="error-details" id="error-details" style="display: none;"></div>
         <button class="retry-button" onclick="location.reload()">
@@ -184,25 +154,25 @@
         </button>
     </div>
     
-    <!-- Debug Info (remove in production) -->
+    <!-- Debug Info -->
     <div id="debug-info" class="debug-info" style="display: none;"></div>
 
-    <script>
-        // Global error handler
+    <script type="module">
+        // Global error handler for module errors
         window.addEventListener('error', function(event) {
-            console.error('Global Error:', event.error);
-            showError('JavaScript Error: ' + event.error.message, event.error.stack);
+            console.error('Module Error:', event.error);
+            showError('Module Error: ' + event.error.message, event.error.stack);
         });
         
         // Handle unhandled promise rejections
         window.addEventListener('unhandledrejection', function(event) {
-            console.error('Unhandled Promise Rejection:', event.reason);
+            console.error('Module Promise Rejection:', event.reason);
             showError('Promise Error: ' + event.reason, event.reason);
         });
         
         // Debug logging
         function debugLog(message) {
-            console.log('🔧 CASL Debug:', message);
+            console.log('🔧 CASL Module Debug:', message);
             const debugDiv = document.getElementById('debug-info');
             if (debugDiv) {
                 debugDiv.textContent = message;
@@ -214,7 +184,7 @@
         }
         
         function showError(message, details = null) {
-            console.error('❌ CASL Error:', message);
+            console.error('❌ CASL Module Error:', message);
             
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'none';
@@ -236,10 +206,10 @@
             document.getElementById('app-container').style.display = 'block';
         }
         
-        // Initialization function
-        async function initializeApp() {
+        // Initialize ES6 modules
+        async function initializeModules() {
             try {
-                debugLog('🚀 Starting CASL initialization...');
+                debugLog('🚀 Starting ES6 module initialization...');
                 
                 // Step 1: Check if configuration is loaded
                 debugLog('📋 Checking configuration...');
@@ -248,73 +218,79 @@
                 }
                 console.log('✅ Configuration loaded:', window.CASL_CONFIG);
                 
-                // Step 2: Wait a moment for all scripts to load
-                debugLog('⏳ Waiting for dependencies...');
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Step 2: Import the main CASLApp module
+                debugLog('📦 Importing CASL App module...');
+                const { CASLApp } = await import('./CASLApp.js');
                 
-                // Step 3: Load the main CASLApp component
-                debugLog('📦 Loading CASL App component...');
-                const script = document.createElement('script');
-                script.src = 'CASLApp.js';
+                debugLog('✅ CASLApp module imported successfully');
                 
-                script.onload = function() {
-                    debugLog('✅ CASLApp.js loaded successfully');
-                    
-                    // Give the custom element time to register
-                    setTimeout(() => {
-                        // Check if the custom element is defined
-                        if (customElements.get('casl-app')) {
-                            debugLog('✅ Custom element registered');
-                            showApp();
-                            console.log('🎉 CASL Key Verification System loaded successfully!');
-                        } else {
-                            debugLog('⏳ Waiting for custom element registration...');
-                            // Wait a bit more and try again
-                            setTimeout(() => {
-                                if (customElements.get('casl-app')) {
-                                    showApp();
-                                    console.log('🎉 CASL Key Verification System loaded successfully!');
-                                } else {
-                                    throw new Error('Custom element <casl-app> failed to register');
-                                }
-                            }, 1000);
-                        }
-                    }, 100);
-                };
+                // Step 3: Wait for custom element to register
+                debugLog('⏳ Waiting for custom element registration...');
                 
-                script.onerror = function(event) {
-                    throw new Error('Failed to load CASLApp.js. Please check if the file exists and is accessible.');
-                };
+                // Give it time to register
+                await new Promise(resolve => setTimeout(resolve, 100));
                 
-                document.head.appendChild(script);
+                // Check if registered
+                if (customElements.get('casl-app')) {
+                    debugLog('✅ Custom element <casl-app> registered');
+                    showApp();
+                    console.log('🎉 CASL Key Verification System loaded successfully!');
+                } else {
+                    // Wait a bit more
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    if (customElements.get('casl-app')) {
+                        showApp();
+                        console.log('🎉 CASL Key Verification System loaded successfully!');
+                    } else {
+                        throw new Error('Custom element <casl-app> failed to register after import');
+                    }
+                }
                 
             } catch (error) {
-                console.error('❌ Initialization failed:', error);
-                showError(error.message, error.stack);
+                console.error('❌ Module initialization failed:', error);
+                
+                let errorMessage = error.message;
+                let details = error.stack;
+                
+                // Provide helpful error messages
+                if (error.message.includes('Failed to resolve module specifier')) {
+                    errorMessage = 'ES6 Module Import Error: ' + error.message;
+                    details = 'This usually means:\n' +
+                             '• A JavaScript file is missing\n' +
+                             '• Import path is incorrect\n' +
+                             '• File has syntax errors\n\n' +
+                             'Original error:\n' + error.stack;
+                } else if (error.message.includes('Unexpected token')) {
+                    errorMessage = 'JavaScript Syntax Error: ' + error.message;
+                    details = 'This usually means:\n' +
+                             '• File has invalid JavaScript syntax\n' +
+                             '• Missing semicolons or brackets\n' +
+                             '• Invalid ES6 syntax\n\n' +
+                             'Original error:\n' + error.stack;
+                }
+                
+                showError(errorMessage, details);
             }
         }
         
-        // Enhanced ready state handler
-        function startWhenReady() {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(initializeApp, 100);
-                });
-            } else {
-                setTimeout(initializeApp, 100);
-            }
+        // Start initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeModules);
+        } else {
+            initializeModules();
         }
         
-        // Start the initialization
-        startWhenReady();
-        
-        // Fallback timeout
+        // Global fallback timeout
         setTimeout(function() {
             if (document.getElementById('loading-screen').style.display !== 'none') {
-                console.warn('⚠️ App initialization took too long, something may be wrong');
+                console.warn('⚠️ Module loading took too long');
                 showError(
-                    'The application is taking longer than expected to load.',
-                    'This might indicate a problem with the JavaScript files or network connection.'
+                    'Module loading is taking longer than expected.',
+                    'This might indicate:\n' +
+                    '• Network connectivity issues\n' +
+                    '• Large JavaScript files\n' +
+                    '• Import dependency loops\n' +
+                    '• Syntax errors in modules'
                 );
             }
         }, 15000); // 15 second timeout
