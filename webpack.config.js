@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.js',
+  entry: './index.js',
   output: {
     filename: 'casl-bundle.js',
     path: path.resolve(__dirname, 'build/js'),
