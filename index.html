@@ -1,4 +1,62 @@
-<!-- Global configuration and polyfills -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASL Key Verification System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    
+    .initial-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: #666;
+      font-size: 18px;
+    }
+    
+    /* Hide the loading screen once the app loads */
+    .app-loaded .initial-loading {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple loading screen that disappears when app loads -->
+  <div class="initial-loading" id="initial-loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading CASL Key Verification System...</div>
+  </div>
+
+  <!-- The main app element -->
+  <casl-app></casl-app>
+
+  <!-- Global configuration -->
   <script>
     // Simulate process.env for compatibility
     window.process = {
@@ -36,30 +94,31 @@
       }
     };
 
-    // DOM elements for reference
-    window.CASL_ELEMENTS = {
-      appElement: null,
-      loadingElement: null,
-      errorElement: null
-    };
-
+    // Hide loading screen when app is ready
     document.addEventListener('DOMContentLoaded', () => {
-      window.CASL_ELEMENTS.appElement = document.querySelector('casl-app');
-      window.CASL_ELEMENTS.loadingElement = document.getElementById('loading-message');
-      window.CASL_ELEMENTS.errorElement = document.getElementById('error-message');
+      // Give the app a moment to initialize
+      setTimeout(() => {
+        document.body.classList.add('app-loaded');
+      }, 1000);
+    });
 
-      if (!window.CASL_CONFIG) {
-        window.CASL_ELEMENTS.errorElement.textContent = 'Configuration not loaded. Please check that casl-config.js is accessible.';
-        window.CASL_ELEMENTS.errorElement.style.display = 'block';
-        window.CASL_ELEMENTS.loadingElement.style.display = 'none';
-        return;
+    // Global error handler
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e);
+      const loadingEl = document.getElementById('initial-loading');
+      if (loadingEl) {
+        loadingEl.innerHTML = `
+          <div style="color: #d32f2f; text-align: center;">
+            <h3>Error Loading Application</h3>
+            <p>${e.message || 'Unknown error occurred'}</p>
+            <p>Please refresh the page or check the console for details.</p>
+          </div>
+        `;
       }
-
-      // ✅ Show the app and hide the loading message
-      window.CASL_ELEMENTS.loadingElement.style.display = 'none';
-      window.CASL_ELEMENTS.appElement.style.display = 'block';
     });
   </script>
 
-  <!-- Load the webpack bundle instead of ES6 modules -->
+  <!-- Load the webpack bundle -->
   <script src="casl-bundle.js"></script>
+</body>
+</html>
