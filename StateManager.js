@@ -470,3 +470,11 @@ class StateManager {
     };
   }
 }
+// Create and export the state manager instance
+const stateManager = new StateManager();
+
+// Initialize persisted state
+stateManager.loadPersistedState();
+
+// Export for use in other modules
+export { stateManager, StateManager };
