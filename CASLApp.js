@@ -1,9 +1,22 @@
-// Fixed CASLApp.js - No ES6 imports, uses global variables instead
+// Fixed version of YOUR CASLApp.js - just removing ES6 imports
+
+// REMOVE these lines from the top of your CASLApp.js:
+// import { getStyles } from './styles.js';
+// import { i18nService, t } from './i18n.js';
+// import { userService } from './userService.js';
+// import { paymentService } from './paymentService.js';
+
+// ADD these lines instead:
+const getStyles = window.getStyles;
+const i18nService = window.i18nService;
+const t = window.t || (window.i18nService ? window.i18nService.translate : (key) => key);
+const userService = window.userService;
+const paymentService = window.paymentService;
 
 /**
  * Main CASL App component that manages authentication, dashboard, and verification
  */
-class CASLApp extends HTMLElement {
+export class CASLApp extends HTMLElement {
   /**
    * Constructor initializes the component
    */
@@ -18,15 +31,11 @@ class CASLApp extends HTMLElement {
     this.render();
     this.setupEventListeners();
     
-    // Check for authentication (with delay to ensure services are ready)
-    setTimeout(() => {
-      this.checkAuthentication();
-    }, 100);
+    // Check for authentication
+    this.checkAuthentication();
     
     // Check for pending payments
-    setTimeout(() => {
-      this.checkPendingPayment();
-    }, 200);
+    this.checkPendingPayment();
   }
   
   /**
@@ -47,211 +56,17 @@ class CASLApp extends HTMLElement {
   }
   
   /**
-   * Get global services (fallback if services don't exist)
-   */
-  getServices() {
-    return {
-      userService: window.userService || this.createFallbackUserService(),
-      paymentService: window.paymentService || this.createFallbackPaymentService(),
-      i18nService: window.i18nService || this.createFallbackI18nService(),
-      getStyles: window.getStyles || this.createFallbackStyles
-    };
-  }
-  
-  /**
-   * Create fallback user service if not available
-   */
-  createFallbackUserService() {
-    return {
-      async getCurrentUser() {
-        console.log('Using fallback userService');
-        return {
-          isAuthenticated: false,
-          user: null,
-          token: null
-        };
-      },
-      async login(email, password) {
-        return { success: true, user: { email }, token: 'demo' };
-      },
-      async register(userData) {
-        return { success: true, message: 'Registration successful (demo)' };
-      },
-      async logout() {
-        return { success: true };
-      }
-    };
-  }
-  
-  /**
-   * Create fallback payment service if not available
-   */
-  createFallbackPaymentService() {
-    return {
-      async checkPendingPayment() {
-        return null;
-      },
-      async startPayment(packageData, userId) {
-        return { success: true, message: 'Payment demo' };
-      }
-    };
-  }
-  
-  /**
-   * Create fallback i18n service if not available
-   */
-  createFallbackI18nService() {
-    return {
-      currentLanguage: 'en',
-      translate: (key) => key.split('.').pop() || key,
-      formatDate: (date) => date.toLocaleDateString(),
-      renderLanguageSelector: () => '<select><option value="en">English</option></select>',
-      getLanguageInfo: () => ({ direction: 'ltr' })
-    };
-  }
-  
-  /**
-   * Create fallback styles if not available
-   */
-  createFallbackStyles() {
-    return `
-      .app-container {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f8f9fa;
-        min-height: 100vh;
-      }
-      
-      .app-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      }
-      
-      .branding h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-      
-      .app-content {
-        min-height: calc(100vh - 120px);
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 60vh;
-      }
-      
-      .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #e9ecef;
-        border-top: 4px solid #667eea;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 1rem;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      .error-container {
-        text-align: center;
-        padding: 2rem;
-      }
-      
-      .alert {
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-      }
-      
-      .alert-error {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-      }
-      
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-      
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-      }
-      
-      .app-footer {
-        background-color: #343a40;
-        color: #adb5bd;
-        text-align: center;
-        padding: 1rem;
-        margin-top: auto;
-      }
-      
-      .auth-container {
-        max-width: 400px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      }
-      
-      .dashboard-container {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      }
-    `;
-  }
-  
-  /**
-   * Translation helper
-   */
-  t(key) {
-    const services = this.getServices();
-    return services.i18nService.translate(key);
-  }
-  
-  /**
    * Check for authentication
    */
   async checkAuthentication() {
     try {
-      console.log('🔐 Checking authentication...');
-      const services = this.getServices();
-      const authState = await services.userService.getCurrentUser();
+      const authState = await userService.getCurrentUser();
       
       if (authState.isAuthenticated) {
         this.user = authState.user;
         this.currentView = 'dashboard';
-        console.log('✅ User authenticated:', this.user);
       } else {
         this.currentView = 'auth';
-        console.log('👤 User not authenticated, showing auth screen');
       }
     } catch (error) {
       console.error('Authentication check error:', error);
@@ -267,12 +82,13 @@ class CASLApp extends HTMLElement {
    */
   async checkPendingPayment() {
     try {
-      const services = this.getServices();
-      const paymentResult = await services.paymentService.checkPendingPayment();
+      const paymentResult = await paymentService.checkPendingPayment();
       
       if (paymentResult && paymentResult.success) {
+        // Show success message
         this.showNotification('Payment successful! Your package has been activated.');
       } else if (paymentResult && !paymentResult.success) {
+        // Show error message
         this.showNotification(paymentResult.error || 'Payment was not completed', 'error');
       }
     } catch (error) {
@@ -285,7 +101,6 @@ class CASLApp extends HTMLElement {
    */
   render() {
     let content;
-    const services = this.getServices();
     
     switch (this.currentView) {
       case 'loading':
@@ -308,8 +123,8 @@ class CASLApp extends HTMLElement {
     }
     
     this.shadowRoot.innerHTML = `
-      <style>${services.getStyles()}</style>
-      <div class="app-container" dir="${services.i18nService.getLanguageInfo(services.i18nService.currentLanguage)?.direction || 'ltr'}">
+      <style>${getStyles()}</style>
+      <div class="app-container" dir="${i18nService.getLanguageInfo(i18nService.currentLanguage)?.direction || 'ltr'}">
         ${this.renderHeader()}
         <div class="app-content">
           ${content}
@@ -323,14 +138,13 @@ class CASLApp extends HTMLElement {
    * Render header
    */
   renderHeader() {
-    const services = this.getServices();
     return `
       <header class="app-header">
         <div class="branding">
           <h1>CASL Key Verification</h1>
         </div>
         <div class="language-selector">
-          ${services.i18nService.renderLanguageSelector()}
+          ${i18nService.renderLanguageSelector()}
         </div>
       </header>
     `;
@@ -354,7 +168,7 @@ class CASLApp extends HTMLElement {
     return `
       <div class="loading-container">
         <div class="loading-spinner"></div>
-        <p>${this.t('app.loading') || 'Loading...'}</p>
+        <p>${t('app.loading')}</p>
       </div>
     `;
   }
@@ -363,57 +177,14 @@ class CASLApp extends HTMLElement {
    * Render authentication view
    */
   renderAuth() {
-    return `
-      <div class="auth-container">
-        <h2>Welcome to CASL Key</h2>
-        <p>Please sign in to continue</p>
-        
-        <form onsubmit="this.getRootNode().host.handleLogin(event)">
-          <div style="margin-bottom: 1rem;">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;">
-          </div>
-          
-          <div style="margin-bottom: 1rem;">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;">
-          </div>
-          
-          <button type="submit" class="btn-primary" style="width: 100%;">Sign In</button>
-        </form>
-        
-        <p style="text-align: center; margin-top: 1rem;">
-          <a href="#" onclick="this.getRootNode().host.showRegister()">Don't have an account? Register</a>
-        </p>
-      </div>
-    `;
+    return `<casl-authentication></casl-authentication>`;
   }
   
   /**
    * Render dashboard view
    */
   renderDashboard() {
-    return `
-      <div class="dashboard-container">
-        <h2>Dashboard</h2>
-        <p>Welcome${this.user ? ', ' + (this.user.email || this.user.name) : ''}!</p>
-        
-        <div style="margin: 2rem 0;">
-          <h3>Quick Actions</h3>
-          <button class="btn-primary" onclick="this.getRootNode().host.startVerification()">
-            Start New Verification
-          </button>
-          
-          <button class="btn-primary" onclick="this.getRootNode().host.viewHistory()" style="margin-left: 1rem;">
-            View History
-          </button>
-        </div>
-        
-        <div style="margin-top: 2rem;">
-          <button onclick="this.getRootNode().host.handleLogout()">Logout</button>
-        </div>
-      </div>
-    `;
+    return `<casl-user-dashboard></casl-user-dashboard>`;
   }
   
   /**
@@ -422,11 +193,7 @@ class CASLApp extends HTMLElement {
   renderVerification() {
     return `
       <div class="verification-container">
-        <h2>Verification Process</h2>
-        <p>Verification functionality coming soon...</p>
-        <button class="btn-primary" onclick="this.getRootNode().host.navigateTo('dashboard')">
-          Back to Dashboard
-        </button>
+        <casl-verification></casl-verification>
       </div>
     `;
   }
@@ -435,28 +202,124 @@ class CASLApp extends HTMLElement {
    * Render verification details view
    */
   renderVerificationDetails() {
+    if (!this.selectedVerification) {
+      return this.renderError('No verification selected');
+    }
+    
+    // Format date
+    const date = new Date(this.selectedVerification.verificationDate);
+    const formattedDate = i18nService.formatDate(date);
+    
+    // Get trust level display data
+    const trustLevelLabel = t(`trustLevel.${this.selectedVerification.trustLevel}`) || this.selectedVerification.trustLevel;
+    
     return `
       <div class="verification-details">
-        <h2>Verification Details</h2>
-        <p>Details functionality coming soon...</p>
-        <button class="btn-primary" onclick="this.getRootNode().host.navigateTo('dashboard')">
-          Back to Dashboard
-        </button>
+        <div class="back-button">
+          <button onclick="this.getRootNode().host.navigateTo('dashboard')">
+            ← ${t('app.backToDashboard')}
+          </button>
+        </div>
+        
+        <h2>${t('app.verificationDetails')}</h2>
+        
+        <div class="details-card">
+          <div class="detail-header">
+            <h3>CASL Key ID: ${this.selectedVerification.caslKeyId}</h3>
+            <p class="verification-date">${formattedDate}</p>
+          </div>
+          
+          <div class="detail-body">
+            <div class="trust-level-section">
+              <h4>${t('app.trustLevel')}</h4>
+              <div class="trust-badge">${trustLevelLabel}</div>
+              <div class="score">
+                <span class="score-number">${this.selectedVerification.score}</span>
+                <span class="score-max">/100</span>
+              </div>
+            </div>
+            
+            <div class="verification-methods">
+              <h4>${t('app.verificationMethods')}</h4>
+              <ul>
+                ${this.selectedVerification.verification.verificationType ? 
+                  `<li>${t('app.' + this.selectedVerification.verification.verificationType)}</li>` : ''}
+                ${this.selectedVerification.verification.backgroundCheckStatus ? 
+                  `<li>${t('app.backgroundCheck')}</li>` : ''}
+                ${this.selectedVerification.verification.idVerificationStatus ? 
+                  `<li>${t('app.idVerification')}</li>` : ''}
+                ${this.selectedVerification.verification.phoneVerificationStatus ? 
+                  `<li>${t('app.phoneVerification')}</li>` : ''}
+                ${this.selectedVerification.verification.socialVerificationStatus ? 
+                  `<li>${t('app.socialVerification')}</li>` : ''}
+              </ul>
+            </div>
+            
+            <div class="booking-details">
+              <h4>${t('app.bookingDetails')}</h4>
+              <table>
+                <tr>
+                  <th>${t('app.platform')}</th>
+                  <td>${this.selectedVerification.booking?.platform || '-'}</td>
+                </tr>
+                <tr>
+                  <th>${t('app.checkInDate')}</th>
+                  <td>${this.selectedVerification.booking?.checkInDate ? 
+                    i18nService.formatDate(new Date(this.selectedVerification.booking.checkInDate)) : '-'}</td>
+                </tr>
+                <tr>
+                  <th>${t('app.checkOutDate')}</th>
+                  <td>${this.selectedVerification.booking?.checkOutDate ? 
+                    i18nService.formatDate(new Date(this.selectedVerification.booking.checkOutDate)) : '-'}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div class="score-factors">
+              <h4>${t('app.scoreFactors')}</h4>
+              ${this.selectedVerification.verification.adjustments && 
+                this.selectedVerification.verification.adjustments.length > 0 ? `
+                <ul>
+                  ${this.selectedVerification.verification.adjustments.map(adj => `
+                    <li class="${adj.points > 0 ? 'positive' : 'negative'}">
+                      ${adj.reason} (${adj.points > 0 ? '+' : ''}${adj.points})
+                    </li>
+                  `).join('')}
+                </ul>
+              ` : `
+                <p>${t('app.noScoreFactors')}</p>
+              `}
+            </div>
+          </div>
+          
+          <div class="detail-actions">
+            <button 
+              class="btn-primary" 
+              onclick="this.getRootNode().host.printVerification('${this.selectedVerification.caslKeyId}')"
+            >
+              ${t('app.printVerification')}
+            </button>
+          </div>
+        </div>
       </div>
     `;
   }
   
   /**
    * Render error state
+   * @param {string} message - Error message
    */
   renderError(message) {
     return `
       <div class="error-container">
         <div class="alert alert-error" role="alert">
-          ${message || this.error || 'An error occurred'}
+          ${message || this.error || t('app.genericError')}
         </div>
-        <button class="btn-primary" onclick="this.getRootNode().host.navigateTo('auth')">
-          Back to Login
+        <button 
+          class="btn-primary" 
+          onclick="this.getRootNode().host.navigateTo('dashboard')"
+        >
+          ${t('app.retry')}
         </button>
       </div>
     `;
@@ -464,17 +327,39 @@ class CASLApp extends HTMLElement {
   
   /**
    * Show notification
+   * @param {string} message - Notification message
+   * @param {string} type - Notification type (success, error, info)
    */
   showNotification(message, type = 'success') {
-    console.log(`📢 Notification (${type}):`, message);
-    // For now, just log. Could implement toast notifications later.
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.className = 'notification-close';
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = () => notification.remove();
+    notification.appendChild(closeButton);
+    
+    // Add to shadow root
+    this.shadowRoot.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 5000);
   }
   
   /**
    * Navigate to a view
+   * @param {string} view - View name
+   * @param {Object} data - View data
    */
   navigateTo(view, data = null) {
-    console.log('🧭 Navigating to:', view);
     this.currentView = view;
     
     if (view === 'verification-details' && data) {
@@ -485,87 +370,338 @@ class CASLApp extends HTMLElement {
   }
   
   /**
-   * Handle login form submission
+   * Print verification
+   * @param {string} caslKeyId - CASL Key ID
    */
-  async handleLogin(event) {
-    event.preventDefault();
+  printVerification(caslKeyId) {
+    // Create a printable version of the verification
+    const printWindow = window.open('', '_blank');
     
-    const formData = new FormData(event.target);
-    const email = formData.get('email');
-    const password = formData.get('password');
+    if (!printWindow) {
+      this.showNotification('Please allow pop-ups to print verification', 'error');
+      return;
+    }
     
-    try {
-      console.log('🔑 Attempting login for:', email);
-      const services = this.getServices();
-      const result = await services.userService.login(email, password);
-      
-      if (result.success) {
-        this.user = result.user;
+    // Format verification data for printing
+    const verification = this.selectedVerification;
+    const date = new Date(verification.verificationDate);
+    const formattedDate = i18nService.formatDate(date);
+    const trustLevelLabel = t(`trustLevel.${verification.trustLevel}`) || verification.trustLevel;
+    
+    // Create print content
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>CASL Key Verification - ${verification.caslKeyId}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 2cm;
+            color: #333;
+            line-height: 1.5;
+          }
+          
+          h1, h2, h3, h4 {
+            color: #2c3e50;
+          }
+          
+          .header {
+            text-align: center;
+            margin-bottom: 2em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1em;
+          }
+          
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+          }
+          
+          .verification-id {
+            font-size: 18px;
+            margin: 1em 0;
+          }
+          
+          .verification-date {
+            color: #7f8c8d;
+          }
+          
+          .trust-badge {
+            display: inline-block;
+            padding: 0.5em 1em;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            margin: 1em 0;
+            background-color: ${
+              verification.trustLevel === 'verified' ? '#4CAF50' : 
+              verification.trustLevel === 'review' ? '#FFC107' : 
+              verification.trustLevel === 'manual_review' ? '#9E9E9E' : 
+              '#757575'
+            };
+          }
+          
+          .score {
+            font-size: 24px;
+            margin: 1em 0;
+          }
+          
+          .section {
+            margin: 1.5em 0;
+          }
+          
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+          }
+          
+          th, td {
+            padding: 0.5em;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+          }
+          
+          th {
+            width: 30%;
+            font-weight: bold;
+          }
+          
+          .footer {
+            margin-top: 2em;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+          
+          .verification-link {
+            margin-top: 1em;
+            font-size: 12px;
+          }
+          
+          @media print {
+            body {
+              font-size: 12pt;
+            }
+            
+            button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">CASL Key Verification</div>
+          <div class="verification-id">ID: ${verification.caslKeyId}</div>
+          <div class="verification-date">Verified on ${formattedDate}</div>
+        </div>
+        
+        <div class="section">
+          <h2>Trust Level</h2>
+          <div class="trust-badge">${trustLevelLabel}</div>
+          <div class="score">
+            <span class="score-number">${verification.score}</span>
+            <span class="score-max">/100</span>
+          </div>
+        </div>
+        
+        <div class="section">
+          <h2>Verification Methods</h2>
+          <table>
+            <tr>
+              <th>Primary Method</th>
+              <td>${t('app.' + (verification.verification.verificationType || 'notSpecified'))}</td>
+            </tr>
+            ${verification.verification.backgroundCheckStatus ? `
+              <tr>
+                <th>Background Check</th>
+                <td>${t('app.completed')}</td>
+              </tr>
+            ` : ''}
+            ${verification.verification.idVerificationStatus ? `
+              <tr>
+                <th>ID Verification</th>
+                <td>${t('app.completed')}</td>
+              </tr>
+            ` : ''}
+            ${verification.verification.phoneVerificationStatus ? `
+              <tr>
+                <th>Phone Verification</th>
+                <td>${t('app.completed')}</td>
+              </tr>
+            ` : ''}
+            ${verification.verification.socialVerificationStatus ? `
+              <tr>
+                <th>Social Media Verification</th>
+                <td>${t('app.completed')}</td>
+              </tr>
+            ` : ''}
+          </table>
+        </div>
+        
+        <div class="section">
+          <h2>Booking Information</h2>
+          <table>
+            <tr>
+              <th>Platform</th>
+              <td>${verification.booking?.platform || '-'}</td>
+            </tr>
+            <tr>
+              <th>Check-in Date</th>
+              <td>${verification.booking?.checkInDate ? 
+                i18nService.formatDate(new Date(verification.booking.checkInDate)) : '-'}</td>
+            </tr>
+            <tr>
+              <th>Check-out Date</th>
+              <td>${verification.booking?.checkOutDate ? 
+                i18nService.formatDate(new Date(verification.booking.checkOutDate)) : '-'}</td>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="footer">
+          <p>This verification certificate was generated by CASL Key Verification System.</p>
+          <p>© ${new Date().getFullYear()} CASL Key Verification</p>
+          <div class="verification-link">
+            Verify this certificate online at: https://casl-key.example.com/verify/${verification.caslKeyId}
+          </div>
+        </div>
+        
+        <script>
+          // Auto-print
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+  }
+  
+  /**
+   * Handle authentication events
+   * @param {CustomEvent} event - Authentication event
+   */
+  handleAuthEvent(event) {
+    const { type, data } = event.detail;
+    
+    switch (type) {
+      case 'authenticated':
+        this.user = data;
         this.navigateTo('dashboard');
-        console.log('✅ Login successful');
-      } else {
-        this.showNotification('Login failed: ' + (result.message || 'Unknown error'), 'error');
+        break;
+      
+      case 'logged-out':
+        this.user = null;
+        this.navigateTo('auth');
+        break;
+      
+      case 'registration-pending':
+        this.showNotification(`Registration successful! Please check your email to confirm your account.`);
+        break;
+    }
+  }
+  
+  /**
+   * Handle dashboard events
+   * @param {CustomEvent} event - Dashboard event
+   */
+  handleDashboardEvent(event) {
+    const { type, data } = event.detail;
+    
+    switch (type) {
+      case 'new-verification':
+        this.navigateTo('verification');
+        break;
+      
+      case 'view-verification':
+        this.navigateTo('verification-details', data);
+        break;
+      
+      case 'purchase-package':
+        this.handlePackagePurchase(data);
+        break;
+      
+      case 'logout':
+        this.user = null;
+        this.navigateTo('auth');
+        break;
+    }
+  }
+  
+  /**
+   * Handle verification events
+   * @param {CustomEvent} event - Verification event
+   */
+  handleVerificationEvent(event) {
+    const { caslKeyId, trustLevel, verificationData } = event.detail;
+    
+    // Add to user's verification history (this would normally be done by the server)
+    this.showNotification(`Verification complete! Your CASL Key ID is ${caslKeyId}`);
+    
+    // Navigate to dashboard
+    setTimeout(() => {
+      this.navigateTo('dashboard');
+    }, 2000);
+  }
+  
+  /**
+   * Handle package purchase
+   * @param {Object} data - Package data
+   */
+  async handlePackagePurchase(data) {
+    try {
+      // Start payment process
+      const result = await paymentService.startPayment(data.package, data.userId);
+      
+      if (result && result.success) {
+        // Show success message
+        this.showNotification('Payment successful! Your package has been activated.');
+        
+        // Navigate to dashboard
+        this.navigateTo('dashboard');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      this.showNotification('Login error: ' + error.message, 'error');
+      console.error('Payment error:', error);
+      this.showNotification(error.message || 'Payment processing error', 'error');
     }
-  }
-  
-  /**
-   * Handle logout
-   */
-  async handleLogout() {
-    try {
-      const services = this.getServices();
-      await services.userService.logout();
-      this.user = null;
-      this.navigateTo('auth');
-      console.log('👋 Logged out');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  }
-  
-  /**
-   * Show register form
-   */
-  showRegister() {
-    console.log('📝 Show register form (not implemented yet)');
-    this.showNotification('Registration form coming soon!', 'info');
-  }
-  
-  /**
-   * Start verification process
-   */
-  startVerification() {
-    console.log('🔍 Starting verification process');
-    this.navigateTo('verification');
-  }
-  
-  /**
-   * View verification history
-   */
-  viewHistory() {
-    console.log('📋 Viewing verification history');
-    this.showNotification('History view coming soon!', 'info');
   }
   
   /**
    * Setup event listeners
    */
   setupEventListeners() {
+    // Listen for authentication events
+    this.addEventListener('casl-auth', this.handleAuthEvent.bind(this));
+    
+    // Listen for dashboard events
+    this.addEventListener('casl-dashboard', this.handleDashboardEvent.bind(this));
+    
+    // Listen for verification events
+    this.addEventListener('verificationComplete', this.handleVerificationEvent.bind(this));
+    
     // Listen for language changes
     document.addEventListener('caslLanguageChanged', () => {
       this.render();
     });
   }
+    /**
+   * Handle language change from selector
+   */
+  handleLanguageChange(event) {
+    const selectedLang = event.target.value;
+    if (!selectedLang) return;
+
+    i18nService.changeLanguage(selectedLang).then(() => {
+      this.render();
+    });
+  }
+
 }
 
 // Register the custom element
-if (!customElements.get('casl-app')) {
-  customElements.define('casl-app', CASLApp);
-  console.log('✅ Custom element <casl-app> registered successfully');
-} else {
-  console.log('⚠️ Custom element <casl-app> already registered');
-}
+customElements.define('casl-app', CASLApp);
