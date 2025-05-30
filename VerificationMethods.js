@@ -1,8 +1,8 @@
 // src/components/VerificationMethods.js
-import { i18nService as i18n } from '../services/i18n.js';
-import { governmentIdVerification } from '../services/governmentIdVerification.js';
-import { phoneVerification } from '../services/phoneVerification.js';
-import { socialVerification } from '../services/socialVerification.js';
+import { i18nService as i18n } from './i18n.js';
+import { governmentIdVerification } from './governmentIdVerification.js';
+import { phoneVerification } from './phoneVerification.js';
+import { socialVerification } from './socialVerification.js';
 
 /**
  * Renders a selector for additional verification methods

@@ -1,5 +1,5 @@
 	// src/components/CASLVerification.js
-import { getStyles } from './Styles.js';
+import { getStyles } from './styles.js';
 import { renderProgressSteps } from './ProgressSteps.js';
 import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './Alerts.js';
 import { renderNavigationButtons } from './NavigationButtons.js';
@@ -15,7 +15,7 @@ import {
   validateStayIntent, 
   validateAgreement,
   isStepValid
-} from '../utils/validation.js';
+} from './validation.js';
 
 import { stateManager } from './StateManager.js';
 import { eventManager } from './EventManager.js';

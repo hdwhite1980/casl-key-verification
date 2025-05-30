@@ -1,6 +1,6 @@
 // src/components/FormSteps/UserIdentification.js
-import { VERIFICATION_STATUSES } from '../../utils/constants.js';
-import { renderTooltip, renderBackgroundCheckNotification } from '../common/Alerts.js';
+import { VERIFICATION_STATUSES } from './constants.js';
+import { renderTooltip, renderBackgroundCheckNotification } from './Alerts.js';
 
 /**
  * Renders the User Identification form step with enhanced accessibility

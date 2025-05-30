@@ -1,5 +1,5 @@
 // src/components/FormSteps/StayIntent.js
-import { renderTooltip } from '../common/Alerts.js';
+import { renderTooltip } from './Alerts.js';
 
 /**
  * Renders the Stay Intent form step with enhanced accessibility

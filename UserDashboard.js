@@ -1,5 +1,5 @@
 // src/components/UserDashboard.js
-import { getStyles } from './Styles.js';
+import { getStyles } from './styles.js';
 import { userService } from './userService.js';
 import { i18nService, t } from './i18n.js';
 import { API_BASE_URL } from './constants.js';
