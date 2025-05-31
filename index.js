@@ -72,4 +72,8 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
   event.preventDefault(); // Prevent default browser error handling
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> be87dbfe8268f937616d3c36d0e17f84d9b6a6d6
