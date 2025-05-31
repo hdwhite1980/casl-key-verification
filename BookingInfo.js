@@ -1,5 +1,5 @@
 // src/components/FormSteps/BookingInfo.js
-import { renderTooltip } from './Alerts.js';
+import { renderTooltip } from './alerts.js';
 
 /**
  * Renders the Booking Information form step
