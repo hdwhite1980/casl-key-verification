@@ -52,10 +52,10 @@
     <div class="loading-spinner"></div>
     <div class="loading-text">Loading CASL Key Verification System...</div>
   </div>
-
+  
   <!-- The main app element -->
   <casl-app></casl-app>
-
+  
   <!-- Global configuration -->
   <script>
     // Simulate process.env for compatibility
@@ -64,7 +64,7 @@
         NODE_ENV: 'production'
       }
     };
-
+    
     // Global configuration
     window.CASL_CONFIG = {
       api: {
@@ -93,7 +93,7 @@
         environment: "production"
       }
     };
-
+    
     // Hide loading screen when app is ready
     document.addEventListener('DOMContentLoaded', () => {
       // Give the app a moment to initialize
@@ -101,7 +101,7 @@
         document.body.classList.add('app-loaded');
       }, 1000);
     });
-
+    
     // Global error handler
     window.addEventListener('error', function(e) {
       console.error('Global error:', e);
@@ -117,7 +117,10 @@
       }
     });
   </script>
-
+  
+  <!-- 🚨 CRITICAL: Load password reset handler BEFORE the main bundle -->
+  <script src="password-reset-handler.js"></script>
+  
   <!-- Load the webpack bundle -->
   <script src="casl-bundle.js"></script>
 </body>
