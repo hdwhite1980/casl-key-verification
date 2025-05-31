@@ -1,4 +1,4 @@
-// src/components/common/Alerts.js
+// src/components/common/alerts.js
 
 /**
  * Renders alert messages with enhanced accessibility
