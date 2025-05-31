@@ -4,6 +4,9 @@ import { Authentication } from './Authentication.js';
 import { UserDashboard } from './UserDashboard.js';
 import { userService } from './userService.js';
 
+// 🚨 CRITICAL: Make userService globally accessible for dashboard components
+window.userService = userService;
+
 // Import accessibility helper if it exists
 let accessibilityHelper = null;
 try {
@@ -53,6 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ CASL components registered');
   }
   
+  // Confirm userService is available globally
+  if (window.userService) {
+    console.log('✅ userService is globally accessible');
+  } else {
+    console.error('❌ userService not globally accessible - dashboard auth will fail');
+  }
+  
   console.log('✅ CASL Key Verification System initialized');
 });
 
@@ -72,8 +82,15 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
   event.preventDefault(); // Prevent default browser error handling
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> be87dbfe8268f937616d3c36d0e17f84d9b6a6d6
+
+// 🚨 ADDITIONAL: Global auth helper function as backup
+window.getAuthHeaders = function() {
+  if (window.userService && window.userService.getAuthHeaders) {
+    return window.userService.getAuthHeaders();
+  }
+  
+  // Fallback: direct token access
+  const token = localStorage.getItem('casl_access_token');
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
