@@ -132,11 +132,15 @@ export class UserDashboard extends HTMLElement {
    * Load available packages
    */
   async loadPackages() {
+    // ✅ FIXED: Added authentication headers like loadVerificationHistory() does
+    const headers = {
+      'Content-Type': 'application/json',
+      ...userService.getAuthHeaders()
+    };
+
     const response = await fetch(`${API_BASE_URL}/packages`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers
     });
     
     if (!response.ok) {
