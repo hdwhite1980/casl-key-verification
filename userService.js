@@ -190,13 +190,46 @@ class UserService {
 
       const result = await response.json();
 
+      // 🚨 NEW: Handle NEW_PASSWORD_REQUIRED challenge
+      if (result.challenge === 'NEW_PASSWORD_REQUIRED') {
+        console.log('🔄 Password reset required, dispatching event...');
+        
+        // Dispatch custom event for password reset handler to catch
+        const event = new CustomEvent('casl-password-reset-required', {
+          detail: {
+            session: result.session,
+            username: result.username || username,
+            message: result.message
+          },
+          bubbles: true,
+          composed: true
+        });
+        
+        // Dispatch on document so it bubbles everywhere
+        document.dispatchEvent(event);
+        
+        // Create a special error that the Auth component can handle
+        const challengeError = new Error('NEW_PASSWORD_REQUIRED');
+        challengeError.isChallenge = true;
+        challengeError.challengeData = {
+          session: result.session,
+          username: result.username || username
+        };
+        throw challengeError;
+      }
+
+      // Handle successful login
+      if (!result.success) {
+        throw new Error(result.error || 'Login failed');
+      }
+
       this.accessToken = result.accessToken;
       this.refreshToken = result.refreshToken;
       this.currentUser = {
         username,
-        email: result.email,
-        id: result.userId,
-        attributes: result.attributes || {}
+        email: result.user?.email || result.email,
+        id: result.user?.username || result.userId,
+        attributes: result.user || {}
       };
 
       localStorage.setItem('casl_access_token', this.accessToken);
@@ -206,6 +239,56 @@ class UserService {
       return this.currentUser;
     } catch (error) {
       console.error('Login error:', error);
+      
+      // Re-throw challenge errors without modification
+      if (error.isChallenge) {
+        throw error;
+      }
+      
+      throw error;
+    }
+  }
+
+  async setNewPassword(session, username, newPassword) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/set-new-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session,
+          username,
+          newPassword
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Password update failed');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Password update failed');
+      }
+
+      // Store the new tokens
+      this.accessToken = result.accessToken;
+      this.refreshToken = result.refreshToken;
+      this.currentUser = {
+        username,
+        email: result.user?.email,
+        id: result.user?.username,
+        attributes: result.user || {}
+      };
+
+      localStorage.setItem('casl_access_token', this.accessToken);
+      localStorage.setItem('casl_refresh_token', this.refreshToken);
+      localStorage.setItem('casl_user_data', JSON.stringify(this.currentUser));
+
+      return this.currentUser;
+    } catch (error) {
+      console.error('Set new password error:', error);
       throw error;
     }
   }

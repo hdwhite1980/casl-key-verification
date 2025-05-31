@@ -270,7 +270,19 @@ export class Authentication extends HTMLElement {
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      this.error = error.message || t('auth.genericError');
+      
+      // 🚨 UPDATED: Handle password challenge differently
+      if (error.isChallenge && error.challengeData) {
+        console.log('🔄 Password challenge detected, modal should appear...');
+        // Don't show error - the password reset handler will take over
+        // Just set loading to false and return
+        this.isLoading = false;
+        this.render();
+        return;
+      } else {
+        // Handle other login errors normally
+        this.error = error.message || t('auth.genericError');
+      }
     } finally {
       this.isLoading = false;
       this.render();
@@ -309,25 +321,38 @@ export class Authentication extends HTMLElement {
   }
   
   /**
-   * Handle user login
+   * Handle user login - UPDATED to handle password challenge
    * @param {FormData} formData - Form data
    */
   async handleLogin(formData) {
     const username = formData.get('username');
     const password = formData.get('password');
     
-    // Log in user with Cognito
-    const user = await userService.loginUser(username, password);
-    
-    // Update state
-    this.isAuthenticated = true;
-    this.user = user;
-    
-    // Dispatch authentication event
-    this.dispatchAuthEvent('authenticated', user);
-    
-    // Render authenticated state
-    this.render();
+    try {
+      // Log in user with Cognito
+      const user = await userService.loginUser(username, password);
+      
+      // Update state
+      this.isAuthenticated = true;
+      this.user = user;
+      
+      // Dispatch authentication event
+      this.dispatchAuthEvent('authenticated', user);
+      
+      // Render authenticated state
+      this.render();
+    } catch (error) {
+      // 🚨 UPDATED: Handle password challenge differently
+      if (error.isChallenge && error.challengeData) {
+        console.log('🔄 Password challenge detected, modal should appear...');
+        // Don't show error - the password reset handler will take over
+        // Just re-throw the error so the parent handleSubmit can handle it
+        throw error;
+      } else {
+        // Handle other login errors normally
+        throw error;
+      }
+    }
   }
   
   /**
