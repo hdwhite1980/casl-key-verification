@@ -1,7 +1,7 @@
 // src/components/CASLVerification.js
-import { getStyles } from './Styles.js';
+import { getStyles } from './styles.js';
 import { renderProgressSteps } from './ProgressSteps.js';
-import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './Alerts.js';
+import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './alerts.js';
 import { renderNavigationButtons } from './NavigationButtons.js';
 import { renderUserIdentification } from './UserIdentification.js';
 import { renderBookingInfo } from './BookingInfo.js';
