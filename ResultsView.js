@@ -1,5 +1,5 @@
 // src/components/ResultsView.js
-import { TRUST_LEVEL_DISPLAY } from '../utils/constants.js';
+import { TRUST_LEVEL_DISPLAY } from './constants.js';
 
 /**
  * Renders the verification results view with enhanced accessibility

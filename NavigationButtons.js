@@ -1,5 +1,5 @@
 // src/components/common/NavigationButtons.js
-import { FORM_STEPS } from '../../utils/constants.js';
+import { FORM_STEPS } from './constants.js';
 
 /**
  * Renders navigation buttons for form steps with enhanced accessibility

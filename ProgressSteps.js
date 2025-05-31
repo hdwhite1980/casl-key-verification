@@ -1,5 +1,5 @@
 // src/components/common/ProgressSteps.js
-import { FORM_STEPS } from '../../utils/constants.js';
+import { FORM_STEPS } from './constants.js';
 
 /**
  * Renders progress steps indicator with improved accessibility

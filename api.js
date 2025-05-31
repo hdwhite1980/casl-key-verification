@@ -478,3 +478,9 @@ class ApiService {
     }
   }
 }
+
+// Create and export the API service instance
+const apiService = new ApiService();
+
+// Export for use in other modules
+export { apiService, ApiService };
