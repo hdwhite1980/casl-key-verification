@@ -3,6 +3,7 @@
 /**
  * Global state management for CASL Verification System
  * Provides a centralized store with subscriptions for components
+ * UPDATED: Fixed formData structure to match validation expectations
  */
 class StateManager {
   constructor() {
@@ -29,16 +30,47 @@ class StateManager {
         backgroundCheckStatus: null
       },
       
-      // Form data
+      // Form data - FIXED STRUCTURE: Flat instead of nested
       formData: {
+        // Meta fields
         currentStep: 0,
-        userData: {},
-        bookingInfo: {},
-        stayIntent: {},
-        agreement: {},
         isValid: false,
         isDirty: false,
-        lastSaved: null
+        lastSaved: null,
+        
+        // User Identification fields
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        
+        // Platform profiles (THESE WERE MISSING!)
+        airbnbProfile: '',
+        vrboProfile: '',
+        otherPlatformProfile: '',
+        
+        // Booking Info fields
+        platform: '',
+        listingLink: '',
+        checkInDate: '',
+        checkOutDate: '',
+        
+        // Stay Intent fields
+        stayPurpose: '',
+        otherPurpose: '',
+        totalGuests: 1,
+        childrenUnder12: 0,           // MISSING FIELD ADDED
+        nonOvernightGuests: 0,        // MISSING FIELD ADDED
+        travelingNearHome: false,
+        zipCode: '',
+        usedSTRBefore: false,
+        previousStayLinks: '',        // MISSING FIELD ADDED
+        
+        // Agreement fields
+        agreeToRules: false,
+        agreeNoParties: false,
+        understandFlagging: false,
+        consentToBackgroundCheck: false  // MISSING FIELD ADDED
       },
       
       // UI state
@@ -267,7 +299,7 @@ class StateManager {
   }
   
   /**
-   * Get initial state
+   * Get initial state - UPDATED to match new formData structure
    * @returns {Object} Initial state
    */
   _getInitialState() {
@@ -291,15 +323,47 @@ class StateManager {
         backgroundCheckStatus: null
       },
       
+      // UPDATED: Flat formData structure to match validation expectations
       formData: {
+        // Meta fields
         currentStep: 0,
-        userData: {},
-        bookingInfo: {},
-        stayIntent: {},
-        agreement: {},
         isValid: false,
         isDirty: false,
-        lastSaved: null
+        lastSaved: null,
+        
+        // User Identification fields
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        
+        // Platform profiles
+        airbnbProfile: '',
+        vrboProfile: '',
+        otherPlatformProfile: '',
+        
+        // Booking Info fields
+        platform: '',
+        listingLink: '',
+        checkInDate: '',
+        checkOutDate: '',
+        
+        // Stay Intent fields
+        stayPurpose: '',
+        otherPurpose: '',
+        totalGuests: 1,
+        childrenUnder12: 0,
+        nonOvernightGuests: 0,
+        travelingNearHome: false,
+        zipCode: '',
+        usedSTRBefore: false,
+        previousStayLinks: '',
+        
+        // Agreement fields
+        agreeToRules: false,
+        agreeNoParties: false,
+        understandFlagging: false,
+        consentToBackgroundCheck: false
       },
       
       ui: {
@@ -339,12 +403,12 @@ class StateManager {
   }
   
   /**
-   * Update form data
+   * Update form data - UPDATED to work with flat structure
    * @param {Object} formData - Form data updates
    */
   updateFormData(formData) {
     this.updateState('formData', currentState => {
-      // Combine existing data with new data
+      // Combine existing data with new data (now flat structure)
       const newState = { ...currentState, ...formData };
       
       // Mark as dirty and set last saved time
@@ -466,15 +530,18 @@ class StateManager {
       persistedSections: {
         formData: !!localStorage.getItem('casl_state_formData'),
         ui: !!localStorage.getItem('casl_state_ui')
-      }
+      },
+      formDataFields: Object.keys(this._state.formData).length
     };
   }
 }
-// Create and export the state manager instance
+
+// Create and export singleton instance
 const stateManager = new StateManager();
 
-// Initialize persisted state
-stateManager.loadPersistedState();
+// Make available globally for debugging
+if (typeof window !== 'undefined') {
+  window._CASLStateManager = stateManager;
+}
 
-// Export for use in other modules
-export { stateManager, StateManager };
+export { stateManager };
