@@ -1,13 +1,13 @@
 // src/components/CASLVerification.js
-import { getStyles } from './Styles.js';
-import { renderProgressSteps } from './ProgressSteps.js';
-import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './Alerts.js';
-import { renderNavigationButtons } from './NavigationButtons.js';
-import { renderUserIdentification } from './UserIdentification.js';
-import { renderBookingInfo } from './BookingInfo.js';
-import { renderStayIntent } from './StayIntent.js';
-import { renderAgreement } from './Agreement.js';
-import { renderResults } from './ResultsView.js';
+import { getStyles } from './styles.js';
+import { renderProgressSteps } from './progressSteps.js';
+import { renderAlerts, renderTrustPreview, renderScreenReaderAnnouncement } from './alerts.js';
+import { renderNavigationButtons } from './navigationButtons.js';
+import { renderUserIdentification } from './userIdentification.js';
+import { renderBookingInfo } from './bookingInfo.js';
+import { renderStayIntent } from './stayIntent.js';
+import { renderAgreement } from './agreement.js';
+import { renderResults } from './resultsView.js';
 
 import { 
   validateUserIdentification, 
@@ -15,14 +15,14 @@ import {
   validateStayIntent, 
   validateAgreement,
   isStepValid
-} from '../utils/validation.js';
+} from './validation.js';
 
 import { stateManager } from './StateManager.js';
-import { eventManager } from './EventManager.js';
-import { errorHandler } from './ErrorHandler.js';
-import { configManager } from './ConfigManager.js';
-import { accessibilityHelper } from './AccessibilityHelper.js';
-import { formHelper } from './FormHelper.js';
+import { eventManager } from './eventManager.js';
+import { errorHandler } from './errorHandler.js';
+import { configManager } from './configManager.js';
+import { accessibilityHelper } from './accessibilityHelper.js';
+import { formHelper } from './formHelper.js';
 import { accessibilityMessages } from './accessibilityMessages.js';
 
 import { apiService } from './api.js';
@@ -44,7 +44,7 @@ import {
   renderVerificationMethodSelector,
   renderVerificationMethod,
   getVerificationBonus
-} from './VerificationMethods.js';
+} from './verificationMethods.js';
 
 import { VERIFICATION_STATUSES, FORM_STEPS } from './constants.js';
 
