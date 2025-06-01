@@ -31,7 +31,7 @@ import { i18nService, t } from './i18n.js';
 import { governmentIdVerification } from './governmentIdVerification.js';
 import { phoneVerification } from './phoneVerification.js';
 import { socialVerification } from './socialVerification.js';
-import { backgroundCheckService } from './backgroundcheck.js';
+import { backgroundCheckService } from './backgroundCheck.js';
 
 import {
   calculateScore,
