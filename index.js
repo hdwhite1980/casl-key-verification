@@ -3,6 +3,7 @@ import { CASLApp } from './CASLApp.js';
 import { Authentication } from './Authentication.js';
 import { UserDashboard } from './UserDashboard.js';
 import { userService } from './userService.js';
+import { CASLVerification } from './CASLVerification.js';
 
 // 🚨 CRITICAL: Make userService globally accessible for dashboard components
 window.userService = userService;
