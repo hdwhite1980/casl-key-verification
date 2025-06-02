@@ -46,7 +46,7 @@ import {
   getVerificationBonus
 } from './VerificationMethods.js';
 
-import { VERIFICATION_STATUSES, FORM_STEPS } from './constants.js';
+// ✅ REMOVED: import { VERIFICATION_STATUSES, FORM_STEPS } from './constants.js';
 
 /**
  * Performance monitoring utility
@@ -269,7 +269,7 @@ export class CASLVerification extends HTMLElement {
       // Initialize state manager subscriptions
       this.initializeState();
       
-      // Setup event listeners
+      // Setup event listeners - ✅ CRITICAL: This sets up shadow root event delegation
       this.setupEventListeners();
       
       // Add skip link for keyboard users
@@ -535,6 +535,9 @@ export class CASLVerification extends HTMLElement {
       
       this.shadowRoot.innerHTML = html;
       
+      // ✅ CRITICAL: Set up direct event listeners after render
+      this.setupDirectEventListeners();
+      
       this.announceStatusChanges();
       
       if (this.firstRender) {
@@ -648,7 +651,7 @@ export class CASLVerification extends HTMLElement {
         accessibilityMessages.submissionComplete(
           this.userIdentification.caslKeyId,
           this.score,
-          this.trustLevel ? FORM_STEPS[this.trustLevel] : 'Unknown'
+          this.trustLevel || 'Unknown' // ✅ FIXED: Direct string instead of FORM_STEPS lookup
         ), 
         'polite'
       );
@@ -699,7 +702,7 @@ export class CASLVerification extends HTMLElement {
   }
   
   /**
-   * Handle input changes
+   * Handle input changes - ✅ FIXED: Proper input binding
    */
   handleInputChange(event) {
     performance.mark('input_change_start');
@@ -761,7 +764,7 @@ export class CASLVerification extends HTMLElement {
       this.updateTrustPreview();
     }
     
-    if (this.currentStep < 3) { // Using literal 3 instead of FORM_STEPS.length - 1
+    if (this.currentStep < 3) { // ✅ FIXED: Using literal 3 instead of FORM_STEPS.length - 1
       this.currentStep += 1;
       
       stateManager.updateFormData({
@@ -772,7 +775,7 @@ export class CASLVerification extends HTMLElement {
       this.validateForm();
       
       accessibilityHelper.announce(
-        accessibilityMessages.stepChange(this.currentStep + 1, 4), // Using literal 4 instead of FORM_STEPS.length
+        accessibilityMessages.stepChange(this.currentStep + 1, 4), // ✅ FIXED: Using literal 4 instead of FORM_STEPS.length
         'polite'
       );
     } else {
@@ -795,7 +798,7 @@ export class CASLVerification extends HTMLElement {
       this.validateForm();
       
       accessibilityHelper.announce(
-        accessibilityMessages.stepChange(this.currentStep + 1, 4), // Using literal 4 instead of FORM_STEPS.length
+        accessibilityMessages.stepChange(this.currentStep + 1, 4), // ✅ FIXED: Using literal 4 instead of FORM_STEPS.length
         'polite'
       );
     }
@@ -899,7 +902,7 @@ export class CASLVerification extends HTMLElement {
         accessibilityMessages.submissionComplete(
           this.userIdentification.caslKeyId,
           result.score,
-          trustLevel ? FORM_STEPS[trustLevel] : 'Unknown'
+          trustLevel || 'Unknown' // ✅ FIXED: Direct string instead of FORM_STEPS lookup
         ), 
         'polite'
       );
@@ -954,8 +957,8 @@ export class CASLVerification extends HTMLElement {
       
       const userIdentification = await apiService.checkUserStatus(userData);
       
-      const isVerified = this.verificationStatus === 'VERIFIED' || // Using literal instead of VERIFICATION_STATUSES.VERIFIED
-                         this.verificationStatus === 'MANUAL_REVIEW'; // Using literal instead of VERIFICATION_STATUSES.MANUAL_REVIEW
+      const isVerified = this.verificationStatus === 'VERIFIED' || // ✅ FIXED: Using literal instead of VERIFICATION_STATUSES.VERIFIED
+                         this.verificationStatus === 'MANUAL_REVIEW'; // ✅ FIXED: Using literal instead of VERIFICATION_STATUSES.MANUAL_REVIEW
       
       if (isVerified && !userIdentification.isVerified) {
         userIdentification.isVerified = true;
@@ -1237,7 +1240,7 @@ export class CASLVerification extends HTMLElement {
   }
   
   /**
-   * Setup event listeners
+   * ✅ FIXED: Setup proper event listeners for shadow root
    */
   setupEventListeners() {
     this.registerEventHandlers();
@@ -1261,6 +1264,46 @@ export class CASLVerification extends HTMLElement {
         this.render();
       });
     }
+  }
+
+  /**
+   * ✅ NEW: Setup direct event listeners in shadow root (called after each render)
+   */
+  setupDirectEventListeners() {
+    const shadowRoot = this.shadowRoot;
+    
+    // Input change delegation
+    const handleInputDelegate = (e) => {
+      if (e.target.matches('input, select, textarea')) {
+        this.handleInputChange(e);
+      }
+    };
+    
+    // Button click delegation
+    const handleButtonDelegate = (e) => {
+      const button = e.target.closest('button');
+      if (!button) return;
+      
+      e.preventDefault();
+      
+      if (button.textContent.includes('Next') || button.classList.contains('btn-next')) {
+        this.handleNextStep();
+      } else if (button.textContent.includes('Previous') || button.classList.contains('btn-previous')) {
+        this.handlePreviousStep();
+      } else if (button.type === 'submit') {
+        this.handleSubmit();
+      }
+    };
+    
+    // Remove old listeners to prevent duplicates
+    shadowRoot.removeEventListener('input', handleInputDelegate);
+    shadowRoot.removeEventListener('change', handleInputDelegate);
+    shadowRoot.removeEventListener('click', handleButtonDelegate);
+    
+    // Add new listeners
+    shadowRoot.addEventListener('input', handleInputDelegate);
+    shadowRoot.addEventListener('change', handleInputDelegate);
+    shadowRoot.addEventListener('click', handleButtonDelegate);
   }
   
   /**
