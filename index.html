@@ -44,6 +44,15 @@
     .app-loaded .initial-loading {
       display: none;
     }
+
+    /* ✅ NEW: Component visibility control */
+    .component-section {
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .component-section.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -53,9 +62,15 @@
     <div class="loading-text">Loading CASL Key Verification System...</div>
   </div>
   
-  <!-- The main app element -->
-  <casl-app></casl-app>
-  <casl-verification></casl-verification>
+  <!-- ✅ Authentication component - shown initially -->
+  <div class="component-section" id="auth-section">
+    <casl-app></casl-app>
+  </div>
+  
+  <!-- ✅ Verification component - hidden initially -->
+  <div class="component-section hidden" id="verification-section">
+    <casl-verification></casl-verification>
+  </div>
   
   <!-- Global configuration -->
   <script>
@@ -94,6 +109,31 @@
         environment: "production"
       }
     };
+
+    // ✅ NEW: Functions to switch between components
+    window.showAuthentication = function() {
+      document.getElementById('auth-section').classList.remove('hidden');
+      document.getElementById('verification-section').classList.add('hidden');
+      console.log('🔐 Showing authentication');
+    };
+
+    window.showVerification = function() {
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('verification-section').classList.remove('hidden');
+      console.log('✅ Showing verification');
+    };
+
+    // ✅ NEW: Listen for successful authentication
+    document.addEventListener('userAuthenticated', function(event) {
+      console.log('🎉 User authenticated, switching to verification');
+      showVerification();
+    });
+
+    // ✅ NEW: Listen for logout
+    document.addEventListener('userLoggedOut', function(event) {
+      console.log('👋 User logged out, switching to authentication');
+      showAuthentication();
+    });
     
     // Hide loading screen when app is ready
     document.addEventListener('DOMContentLoaded', () => {
